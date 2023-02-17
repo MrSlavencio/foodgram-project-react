@@ -1,4 +1,4 @@
-from core.models import CreatedModel
+# from core.models import CreatedModel
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -33,10 +33,6 @@ class Ingredient(models.Model):
         verbose_name='Ингредиент',
         help_text='Название ингредиента'
     )
-    quantity = models.FloatField(
-        verbose_name='Количество',
-        help_text='Количество ингредиента'
-    )
     unit = models.ForeignKey(
         Unit,
         related_name='unit',
@@ -44,14 +40,38 @@ class Ingredient(models.Model):
         verbose_name='Единица измерения',
         help_text='Единица измерения ингредиента'
     )
-
+    
     class Meta:
+        unique_together = ('name', 'unit',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+    
+    def __str__(self):
+        ingr_unit = f'{self.name}, {self.unit}'
+        return ingr_unit
+    
+
+class IngredientsInReciepe(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        related_name='ingredient',
+        on_delete=models.CASCADE,
+        verbose_name='Ингредиент',
+        help_text='Ингредиенты'
+    )
+    quantity = models.FloatField(
+        verbose_name='Количество',
+        help_text='Количество ингредиента'
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
-        return self.name
-
+        ingr_qut_unit = f'{self.ingredient.name} - {self.quantity}, {self.ingredient.unit}'
+        return ingr_qut_unit
+    
 
 class Tag(models.Model):
     name = models.CharField(
@@ -78,7 +98,7 @@ class Tag(models.Model):
         return self.name
 
 
-class Reciepe(CreatedModel):
+class Reciepe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -102,8 +122,8 @@ class Reciepe(CreatedModel):
         help_text='Описание рецепта'
     )
     ingredients = models.ManyToManyField(
-        to=Ingredient,
-        related_name='ingredients'
+        to=IngredientsInReciepe,
+        related_name='ingredients',
     )
     tag = models.ManyToManyField(
         to=Tag,
