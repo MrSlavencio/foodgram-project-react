@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Unit, Ingredient, IngredientsInReciepe, Tag, Reciepe
+from .models import Unit, Ingredient, Tag, Reciepe, IngredientAmount, TagReciepe
 
 
 class UnitAdmin(admin.ModelAdmin):
@@ -8,26 +8,23 @@ class UnitAdmin(admin.ModelAdmin):
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'unit') 
+    list_display = ('name', 'measurement_unit') 
     search_fields = ('name',) 
     list_filter = ('name',)
     
-    
-class IngredietsInReciepeAdmin(admin.ModelAdmin):
-    list_display = ('ingredient',)
-    search_fields = ('ingredient',)
-    list_filter = ('ingredient',)
 
 class ReciepeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author') 
-    list_filter = ('name', 'author', 'tag')
+    list_filter = ('name', 'author', 'tags')
 
 admin.site.register(Unit, UnitAdmin)
 
 admin.site.register(Ingredient, IngredientAdmin)
 
-admin.site.register(IngredientsInReciepe, IngredietsInReciepeAdmin)
+admin.site.register(IngredientAmount)
 
 admin.site.register(Tag)
+
+admin.site.register(TagReciepe)
 
 admin.site.register(Reciepe, ReciepeAdmin)
