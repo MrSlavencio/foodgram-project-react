@@ -1,12 +1,9 @@
-# from core.models import CreatedModel
-from django.contrib.auth import get_user_model
 from django.db import models
 
 from django.core.validators import MinValueValidator
 from django.db.models import CheckConstraint, Q, Exists, OuterRef
 
 from users.models import User
-#User = get_user_model()
 
 
 class Ingredient(models.Model):
@@ -20,16 +17,16 @@ class Ingredient(models.Model):
         verbose_name='Единица измерения',
         help_text='Название единицы измерения'
     )
-    
+
     class Meta:
         unique_together = ('name', 'measurement_unit',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-    
+
     def __str__(self):
         ingr_unit = f'{self.name}, {self.measurement_unit}'
         return ingr_unit
-    
+
 
 class IngredientAmount(models.Model):
     ingredient = models.ForeignKey(
@@ -61,9 +58,12 @@ class IngredientAmount(models.Model):
         verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
-        ingr_qut_unit = f'{self.ingredient.name} - {self.amount}, {self.ingredient.measurement_unit}'
+        ingr_qut_unit = (
+            f'{self.ingredient.name} - {self.amount}, '
+            f'{self.ingredient.measurement_unit}'
+        )
         return ingr_qut_unit
-    
+
 
 class Tag(models.Model):
     name = models.CharField(
@@ -105,15 +105,15 @@ class TagRecipe(models.Model):
         verbose_name='Рецепт',
         help_text='Рецепт'
     )
-    
+
     class Meta:
         verbose_name = 'Тег рецепта'
         verbose_name_plural = 'Теги рецепта'
 
     def __str__(self):
         return f'{self.tag}_{self.recipe}'
-    
-    
+
+
 class Subscription(models.Model):
     subscriber = models.ForeignKey(
         User,
@@ -147,7 +147,7 @@ class Favorite(models.Model):
         help_text='Пользователь, добавивший рецепт в избранное'
     )
     adding_dt = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['-adding_dt']
         verbose_name = 'Избранное'
@@ -156,8 +156,8 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f'{self.user} added {self.recipe}'
-    
-    
+
+
 class ShoppingCart(models.Model):
     recipe = models.ForeignKey(
         'Recipe',
@@ -174,7 +174,7 @@ class ShoppingCart(models.Model):
         help_text='Пользователь, добавивший рецепт в список покупок'
     )
     adding_dt = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['-adding_dt']
         verbose_name = 'Список покупок'
@@ -183,8 +183,8 @@ class ShoppingCart(models.Model):
 
     def __str__(self):
         return f"{self.user} added {self.recipe}"
-    
-    
+
+
 class RecipeQuerySet(models.QuerySet):
     def add_user_annotations(self, user_id):
         return self.annotate(
@@ -197,7 +197,8 @@ class RecipeQuerySet(models.QuerySet):
                 )
             )
         )
-        
+
+
 class Recipe(models.Model):
     author = models.ForeignKey(
         User,
@@ -239,7 +240,7 @@ class Recipe(models.Model):
         validators=[MinValueValidator(1)]
     )
     pub_date = models.DateTimeField(auto_now_add=True)
-    
+
     objects = RecipeQuerySet.as_manager()
 
     class Meta:
