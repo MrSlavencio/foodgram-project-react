@@ -1,6 +1,6 @@
 import django_filters as filters
+from recipes.models import Recipe, Tag
 from rest_framework.filters import SearchFilter
-from recipes.models import Ingredient, Recipe, Tag
 
 
 class RecipeFilter(filters.FilterSet):
@@ -23,7 +23,7 @@ class RecipeFilter(filters.FilterSet):
         user = self.request.user
         if value == '1':
             return queryset.filter(favorite__user=user)
-        elif value == '0':
+        if value == '0':
             return queryset.exclude(favorite__user=user)
         return queryset
 
@@ -31,7 +31,7 @@ class RecipeFilter(filters.FilterSet):
         user = self.request.user
         if value == '1':
             return queryset.filter(in_shoppingcard__user=user)
-        elif value == '0':
+        if value == '0':
             return queryset.exclude(in_shoppingcard__user=user)
         return queryset
 

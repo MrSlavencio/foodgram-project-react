@@ -1,23 +1,27 @@
-from rest_framework import serializers
 from django.db import transaction
-from drf_extra_fields.fields import Base64ImageField
-
-from recipes.models import (Tag, Ingredient, Recipe, IngredientAmount,
-                            Subscription, TagRecipe, Favorite, ShoppingCart)
-
-from users.models import User
-
 from djoser.serializers import UserSerializer
+from drf_extra_fields.fields import Base64ImageField
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Subscription, Tag, TagRecipe)
+from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from users.models import User
 
 
 class CustomUserSerializer(UserSerializer):
-    
+
     is_subscribed = serializers.SerializerMethodField('check_if_is_subscribed')
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed')
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed'
+        )
 
     def check_if_is_subscribed(self, obj):
         current_user = self.context.get('current_user')
@@ -197,7 +201,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class SpecialRecipeSerializer(serializers.ModelSerializer):
-    #image = Base64ImageField(use_url=True)
 
     class Meta:
         model = Recipe
@@ -216,7 +219,7 @@ class SpecialRecipeSerializer(serializers.ModelSerializer):
 
 
 class ShowFollowerSerializer(serializers.ModelSerializer):
-    
+
     is_subscribed = serializers.SerializerMethodField('check_if_is_subscribed')
     recipes_count = serializers.SerializerMethodField('get_recipes_count')
     recipes = serializers.SerializerMethodField('get_recipes')
@@ -247,7 +250,7 @@ class ShowFollowerSerializer(serializers.ModelSerializer):
         else:
             recipes = Recipe.objects.filter(author=obj)[:recipes_limit]
         return SpecialRecipeSerializer(recipes, many=True, read_only=True).data
-        
+
     def check_if_is_subscribed(self, obj):
         current_user = self.context.get('current_user')
         if current_user is None:
@@ -257,8 +260,7 @@ class ShowFollowerSerializer(serializers.ModelSerializer):
         ).exists()
 
     def get_recipes_count(self, obj):
-        count = Recipe.objects.filter(author=obj).count()
-        return count
+        return Recipe.objects.filter(author=obj).count()
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

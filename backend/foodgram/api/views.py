@@ -1,31 +1,25 @@
-from rest_framework import viewsets
-from .filters import RecipeFilter, IngredientFilter
-from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import (Tag, Ingredient, Recipe, Subscription, Favorite,
-                            ShoppingCart, IngredientAmount)
-from .serializers import (
-    TagSerializer, IngredientSerializer, ReadRecipeSerializer,
-    WriteRecipeSerializer, SubscriptionSerializer, ShowFollowerSerializer,
-    FavoriteSerializer, ShoppingCartSerializer, FavoriteRecipeSerializer,
-    CustomUserSerializer)
-from djoser.views import UserViewSet
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.decorators import action
-from rest_framework import status
-from rest_framework.response import Response
-from users.models import User
-from djoser.conf import settings
-from rest_framework.pagination import PageNumberPagination
 from django.db.models import F, Sum
 from django.http import HttpResponse
-from .permissions import IsAuthorOrReadOnly
-from rest_framework.permissions import (SAFE_METHODS, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly, AllowAny)
-from .mixins import CreateDestroyViewSet
-
-from rest_framework import mixins
 from django.shortcuts import get_object_or_404
-from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Subscription, Tag)
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from users.models import User
+
+from .filters import IngredientFilter, RecipeFilter
+from .mixins import CreateDestroyViewSet
+from .permissions import IsAuthorOrReadOnly
+from .serializers import (CustomUserSerializer, FavoriteRecipeSerializer,
+                          IngredientSerializer, ReadRecipeSerializer,
+                          ShoppingCartSerializer, ShowFollowerSerializer,
+                          SubscriptionSerializer, TagSerializer,
+                          WriteRecipeSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -103,7 +97,7 @@ class CustomUserViewSet(UserViewSet):
                 }
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             if follow.exists():
                 follow.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
@@ -185,7 +179,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         else:
             return ReadRecipeSerializer
 
-
     @action(methods=['delete', 'post'], detail=True)
     def shopping_cart(self, request, pk=None):
         user = request.user
@@ -205,7 +198,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             if shopping_cart.exists():
                 shopping_cart.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)

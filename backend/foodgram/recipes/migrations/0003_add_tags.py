@@ -12,20 +12,20 @@ def add_tags(apps, schema_editor):
     for tag in INITIAL_TAGS:
         new_tag = Tag(**tag)
         new_tag.save()
-        
+
 
 def remove_tags(apps, schema_editor):
     Tag = apps.get_model('recipes', 'Tag')
     for tag in INITIAL_TAGS:
         Tag.objects.get(name=tag['name']).delete()
-        
+
 
 class Migration(migrations.Migration):
-    
+
     dependencies = [
         ('recipes', '0002_initial'),
     ]
-    
+
     operations = [
         migrations.RunPython(
             add_tags,
