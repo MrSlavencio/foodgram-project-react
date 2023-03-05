@@ -185,29 +185,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         else:
             return ReadRecipeSerializer
 
-    # @action(methods=['delete', 'post', 'get'], detail=True)
-    # def favorite(self, request, pk=None):
-    #     user = request.user
-    #     recipe = get_object_or_404(Recipe, id=pk)
-    #     favorite = Favorite.objects.filter(user=user, recipe=recipe)
-    #     data = {
-    #         'recipe': pk,
-    #         'user': user.pk
-    #     }
-    #     if request.method == 'POST':
-    #         if favorite.exists():
-    #             return Response(
-    #                 {'errors': 'Вы уже добавили рецепт в избранное'}, status=status.HTTP_400_BAD_REQUEST
-    #             )
-    #         serializer = FavoriteSerializer(data=data, context=request)
-    #         serializer.is_valid(raise_exception=True)
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     elif request.method == 'DELETE':
-    #         if favorite.exists():
-    #             favorite.delete()
-    #             return Response(status=status.HTTP_204_NO_CONTENT)
-    #         return Response({'errors': 'Рецепт не был добавлен ранее в избранное'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=['delete', 'post'], detail=True)
     def shopping_cart(self, request, pk=None):

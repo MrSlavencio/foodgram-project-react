@@ -21,12 +21,11 @@ class RecipeFilter(filters.FilterSet):
 
     def get_is_favorited(self, queryset, name, value):
         user = self.request.user
-        print(value)
         if value == '1':
-            return Recipe.objects.filter(favorite__user=user)
+            return queryset.filter(favorite__user=user)
         elif value == '0':
-            return Recipe.objects.exclude(favorite__user=user)
-        return Recipe.objects.all()
+            return queryset.exclude(favorite__user=user)
+        return queryset
 
     def get_is_in_shopping_cart(self, queryset, name, value):
         user = self.request.user

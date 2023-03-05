@@ -197,7 +197,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class SpecialRecipeSerializer(serializers.ModelSerializer):
-    image = Base64ImageField()
+    #image = Base64ImageField(use_url=True)
 
     class Meta:
         model = Recipe
@@ -247,7 +247,7 @@ class ShowFollowerSerializer(serializers.ModelSerializer):
         else:
             recipes = Recipe.objects.filter(author=obj)[:recipes_limit]
         return SpecialRecipeSerializer(recipes, many=True, read_only=True).data
-
+        
     def check_if_is_subscribed(self, obj):
         current_user = self.context.get('current_user')
         if current_user is None:
