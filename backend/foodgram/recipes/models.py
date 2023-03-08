@@ -1,8 +1,7 @@
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
-
-from django.core.validators import MinValueValidator
-from django.db.models import CheckConstraint, Q, Exists, OuterRef
-
+from django.db.models import (CheckConstraint, Exists, OuterRef, Q,
+                              UniqueConstraint)
 from users.models import User
 
 
@@ -24,8 +23,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        ingr_unit = f'{self.name}, {self.measurement_unit}'
-        return ingr_unit
+        return f'{self.name}, {self.measurement_unit}'
 
 
 class IngredientAmount(models.Model):
@@ -43,7 +41,7 @@ class IngredientAmount(models.Model):
         help_text='Рецепт'
     )
     amount = models.FloatField(
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(1)],
         verbose_name='Количество',
         help_text='Количество ингредиента'
     )
@@ -51,28 +49,34 @@ class IngredientAmount(models.Model):
     class Meta:
         constraints = (
             CheckConstraint(
-                check=Q(amount__gte=0.0),
-                name='amount is non-negative'),
+                check=Q(amount__gte=1.0),
+                name='amount is more then 1'),
             )
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
-        ingr_qut_unit = (
+        return (
             f'{self.ingredient.name} - {self.amount}, '
             f'{self.ingredient.measurement_unit}'
         )
-        return ingr_qut_unit
 
 
 class Tag(models.Model):
     name = models.CharField(
         max_length=200,
+        validators=[RegexValidator(
+            r'[А-Яа-яA-Za-z0-9- ]', message='Введите корректное имя тега'
+        )],
         verbose_name='Тег',
         help_text='Название тега'
     )
     hex_code = models.CharField(
         max_length=7,
+        validators=[RegexValidator(
+            r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+            message='Формат hex-code некорректен'
+        )],
         verbose_name='Цвет',
         help_text='Цветовой hex-код'
     )
@@ -178,8 +182,13 @@ class ShoppingCart(models.Model):
     class Meta:
         ordering = ['-adding_dt']
         verbose_name = 'Список покупок'
-        verbose_name_plural = verbose_name
-        unique_together = ('user', 'recipe')
+        verbose_name_plural = verbose_name,
+        constraints = [
+            UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='user_and_ricipe_are_unique_together'
+            )
+        ]
 
     def __str__(self):
         return f"{self.user} added {self.recipe}"
@@ -203,6 +212,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name='recipe_author',
         verbose_name='Автор',
         help_text='Автор рецепта'
     )

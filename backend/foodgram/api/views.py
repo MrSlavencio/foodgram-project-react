@@ -8,7 +8,7 @@ from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from users.models import User
 
@@ -19,7 +19,7 @@ from .serializers import (CustomUserSerializer, FavoriteRecipeSerializer,
                           IngredientSerializer, ReadRecipeSerializer,
                           ShoppingCartSerializer, ShowFollowerSerializer,
                           SubscriptionSerializer, TagSerializer,
-                          WriteRecipeSerializer)
+                          WriteRecipeSerializer, SpecialRecipeSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -81,11 +81,6 @@ class CustomUserViewSet(UserViewSet):
             'author': author.id,
         }
         if request.method == 'POST':
-            if follow.exists():
-                return Response(
-                    {'errors': 'Вы уже подписаны'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
             serializer = SubscriptionSerializer(data=data, context=request)
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -98,13 +93,11 @@ class CustomUserViewSet(UserViewSet):
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
-            if follow.exists():
-                follow.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response(
-                {'errors': 'Пользователь не был подписан'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            serializer = SubscriptionSerializer(data=data, context=request)
+            serializer.is_valid(raise_exception=True)
+            follow.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
 
     @action(
         methods=["get"],
@@ -150,7 +143,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     http_method_names = ['get']
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = [IngredientFilter]
+    filter_backends = (IngredientFilter,)
     search_fields = ('^name',)
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
@@ -162,8 +155,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     page_size_default = 6
     pagination_class.page_size = page_size_default
     queryset = Recipe.objects.all()
-    serializer_class = ReadRecipeSerializer
-    filter_backends = [DjangoFilterBackend, ]
+    serializer_class = WriteRecipeSerializer
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
 
@@ -174,10 +167,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def get_serializer_class(self):
-        if self.request.method == 'POST' or self.request.method == 'PATCH':
-            return WriteRecipeSerializer
-        else:
+        if self.request.method in SAFE_METHODS:
             return ReadRecipeSerializer
+        else:
+            return WriteRecipeSerializer
 
     @action(methods=['delete', 'post'], detail=True)
     def shopping_cart(self, request, pk=None):
@@ -189,23 +182,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'user': user.pk
         }
         if request.method == 'POST':
-            if shopping_cart.exists():
-                return Response(
-                    {'errors': 'Вы уже добавили рецепт в список покупок'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
             serializer = ShoppingCartSerializer(data=data, context=request)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
-            if shopping_cart.exists():
-                shopping_cart.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response(
-                {'errors': 'Рецепт не был добавлен в список покупок'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            serializer = ShoppingCartSerializer(data=data, context=request)
+            serializer.is_valid(raise_exception=True)
+            shopping_cart.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['get'], detail=False)
     def download_shopping_cart(self, request):
