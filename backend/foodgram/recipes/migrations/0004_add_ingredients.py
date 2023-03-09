@@ -1,14 +1,9 @@
 import json
 import os
-import pathlib
 
 from django.db import migrations
 
-work_dir = pathlib.Path().resolve()
-work_dir_1lvl_up = os.path.split(work_dir)[0]
-base_dir = os.path.split(work_dir_1lvl_up)[0]
-
-with open(os.path.join(base_dir, 'data', 'ingredients.json'), 'r') as file:
+with open(os.path.join('data', 'ingredients.json'), 'r') as file:
     ingredients_json = file.read()
 
 INITIAL_INGREDIENTS = json.loads(ingredients_json)
