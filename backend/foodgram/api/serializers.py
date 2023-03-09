@@ -4,7 +4,6 @@ from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Subscription, Tag, TagRecipe)
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 from users.models import User
 
 
@@ -19,7 +18,7 @@ class CustomUserSerializer(UserSerializer):
         return Subscription.objects.filter(
             subscriber=obj, author=current_user
         ).exists()
-        
+
     class Meta:
         model = User
         fields = (
@@ -166,6 +165,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         instance.name = validated_data.pop('name')
         instance.description = validated_data.pop('description')
         instance.cooking_time = validated_data.pop('cooking_time')
+        instance.image = validated_data.pop('image')
         instance.tags.set(tags)
         instance.save()
         return instance
@@ -215,7 +215,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         if follow.exists() and self.context.method == 'POST':
             raise serializers.ValidationError({'errors': 'Вы уже подписаны'})
         if not follow.exists() and self.context.method == 'DELETE':
-            raise serializers.ValidationError({'errors': 'Вы не были подписаны'})
+            raise serializers.ValidationError(
+                {'errors': 'Вы не были подписаны'}
+            )
         if subscriber == author:
             raise serializers.ValidationError('На себя подписаться нельзя')
         return data

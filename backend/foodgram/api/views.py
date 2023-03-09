@@ -19,7 +19,7 @@ from .serializers import (CustomUserSerializer, FavoriteRecipeSerializer,
                           IngredientSerializer, ReadRecipeSerializer,
                           ShoppingCartSerializer, ShowFollowerSerializer,
                           SubscriptionSerializer, TagSerializer,
-                          WriteRecipeSerializer, SpecialRecipeSerializer)
+                          WriteRecipeSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -98,7 +98,6 @@ class CustomUserViewSet(UserViewSet):
             follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-
     @action(
         methods=["get"],
         detail=False
@@ -169,8 +168,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return ReadRecipeSerializer
-        else:
-            return WriteRecipeSerializer
+        return WriteRecipeSerializer
 
     @action(methods=['delete', 'post'], detail=True)
     def shopping_cart(self, request, pk=None):
