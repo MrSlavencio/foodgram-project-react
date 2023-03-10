@@ -13,8 +13,8 @@ services:
     build: ../backend
     restart: always
     volumes:
-      - foodgram_static_volume:/backend/static/
-      - foodgram_media_volume:/backend/media/
+      - foodgram_static_volume:/app/static/
+      - foodgram_media_volume:/app/media/
     depends_on:
       - db
     env_file:
