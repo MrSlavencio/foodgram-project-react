@@ -116,54 +116,45 @@ Authorization: Token <USER'S TOKEN>
 
 DELETE http://<host>/api/users/{id}/subscribe/
 ```
-
-
-
-# Tags
-## Get tags
+**Получить список тегов**
 ```
 GET http://<host>/api/tags/
 ```
-## Get tag
+**Получить тег по id**
 ```
 GET http://<host>/api/tags/{id}/
 ```
-# Ingredients
-## Get ingredients
-Query params:
-- name (string) — search by partial occurrence at the beginning of the ingredient name.
+**Получить список ингредиентов**
+```
+Параметры запроса:
+- name (string) — поиск ингредеиента по части его названия (с начала строки)
 
-```
 GET http://<host>/api/ingredients/
-GET http://<host>/api/ingredients/?name=лу
 ```
-## Get ingredient
+**Получить ингредиент по id**
 ```
 GET http://<host>/api/ingredients/{id}/
 ```
-# Recipes
-## Get recipes
-Query params:
-- page (integer) — number of page to show
-- limit (integer) — limit of objects on page
-- is_favorited (integer 0 or 1) — show only favorite recipes
-- is_in_shopping_cart (integer 0 or 1) — show only recipes in shopping cart
-- author (integer) — show only authors recipes
-- tags (slug) — show recipes that have at least one of given tags
+**Получить рецепты**
+```
+Параметры запроса:
+- page (integer) — номер страницы
+- limit (integer) — количество рецептов на странице
+- is_favorited (integer 0 или 1) — фильтрация, добавлен ли рецепт в избранное
+- is_in_shopping_cart (integer 0 или 1) — фильтрация, добавлен ли рецепт в список покупок
+- author (integer) — фильтрация по id автора рецепта
+- tags (slug) — фильтрация по тегу, допустим выбор нескольких тегов (?tags=breakfast&tags=dinner)
 
-```
 GET http://<host>/api/recipes/
-GET http://<host>/api/recipes/?tags=breakfast&tags=dinner/
-GET http://<host>/api/recipes/?author=3/
-GET http://<host>/api/recipes/?page=3&limit=1&is_favorited=0/
 ```
-## Get recipe
+**Получить рецепт по id**
 ```
 GET http://<host>/api/recipes/{id}/
 ```
-## Create recipe
-Authorization: Token TOKENVALUE
+**Создать рецепт**
 ```
+Authorization: Token <USER'S TOKEN>
+
 POST http://<host>/api/recipes/
 {
     "ingredients": [
@@ -182,11 +173,11 @@ POST http://<host>/api/recipes/
     "cooking_time": 1
 }
 ```
-## Update recipe
-Authorization: Token TOKENVALUE
-
-Allowed only for author.
+**Редактировать рецепт**
 ```
+Authorization: Token <USER'S TOKEN>
+*Доступно только автору рецепта
+
 PATCH http://<host>/api/recipes/{id}/
 {
     "ingredients": [
@@ -200,39 +191,40 @@ PATCH http://<host>/api/recipes/{id}/
     ],
 }
 ```
-## Delete recipe
-Authorization: Token TOKENVALUE
-
-Allowed only for author.
+**Удаление рецепта**
 ```
+Authorization: Token <USER'S TOKEN>
+*Доступно только автору рецепта
+
 DELETE http://<host>/api/recipes/{id}/
 ```
-# Favorites
-## Add recipe to favorites
-Authorization: Token TOKENVALUE
+**Добавить рецепт в избранное**
 ```
+Authorization: Token <USER'S TOKEN>
+
 POST http://<host>/api/recipes/{id}/favorite/
 ```
-## Delete recipe from favorites
-Authorization: Token TOKENVALUE
+**Удаление рецепта из избранного**
 ```
+Authorization: Token <USER'S TOKEN>
+
 DELETE http://<host>/api/recipes/{id}/favorite/
 ```
-# Shopping cart
-## Add to shopping cart
-Authorization: Token TOKENVALUE
+**Добавить рецепт в список покупок**
 ```
+Authorization: Token <USER'S TOKEN>
+
 POST http://<host>/api/recipes/{id}/shopping_cart/
 ```
-## Delete from shopping cart
-Authorization: Token TOKENVALUE
+**Удалить рецепт из списка покупок**
 ```
+Authorization: Token <USER'S TOKEN>
+
 DELETE http://<host>/api/recipes/{id}/shopping_cart/
 ```
-## Download shopping list
-Filename is shop_list.txt
-
-Authorization: Token TOKENVALUE
+**Скачать список покупок**
 ```
+Authorization: Token <USER'S TOKEN>
+
 GET http://<host>/api/recipes/download_shopping_cart/
 ```
