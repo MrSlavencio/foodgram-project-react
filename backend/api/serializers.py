@@ -165,7 +165,10 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         instance.name = validated_data.pop('name')
         instance.description = validated_data.pop('description')
         instance.cooking_time = validated_data.pop('cooking_time')
-        instance.image = validated_data.pop('image')
+        try:
+            instance.image = validated_data.pop('image')
+        except KeyError:
+            instance.image = instance.image
         instance.tags.set(tags)
         instance.save()
         return instance
