@@ -78,52 +78,47 @@ Authorization: Token <USER'S TOKEN>
     "current_password": "string"
 }
 ```
-
-
-
-
-## Get current user info
+**Получение информации о текущем пользователе**
 ```
 GET http://<host>/api/users/me/
 ```
-## Get user info
+**Получение информации о пользователе по его id**
 ```
 GET http://<host>/api/users/{id}/
 ```
-## Get users info
+**Получение информации о всех пользователях**
 ```
 GET http://<host>/api/users/
 ```
-## Get my subscriptions
-Authorization: Token TOKENVALUE
-
-Query params:
-- page (integer) — number of page to show
-- limit (integer) — limit of objects on page
-- recipes_limit (integer) — limit of recipes nested in objects on page
-
+**Получение списка подписок**
 ```
+Authorization: Token <USER'S TOKEN>
+
+Параметры запроса:
+- page (integer) — номер страницы
+- limit (integer) — количество подписок в выдаче
+- recipes_limit (integer) — максимальное количество рецептов пользователя в выдаче
+
 GET http://<host>/api/users/subscriptions/
-GET http://<host>/api/users/subscriptions/?page=3
-GET http://<host>/api/users/subscriptions/?limit=2
-GET http://<host>/api/users/subscriptions/?recipes_limit=3
 ```
-## Subscribe to user
-Authorization: Token TOKENVALUE
-
-Query params:
-- recipes_limit (integer) — limit of recipes nested in object on page
-
+**Подписаться на пользователя**
 ```
+Authorization: Token <USER'S TOKEN>
+
+Параметры запроса:
+- recipes_limit (integer) — максимальное количество рецептов пользователя в выдаче
+
 POST http://<host>/api/users/{id}/subscribe/
-POST http://<host>/api/users/{id}/subscribe/?recipes_limit=5
 ```
-## Unsubscribe from user
-Authorization: Token TOKENVALUE
+**Отписаться от пользователя**
+```
+Authorization: Token <USER'S TOKEN>
 
-```
 DELETE http://<host>/api/users/{id}/subscribe/
 ```
+
+
+
 # Tags
 ## Get tags
 ```
