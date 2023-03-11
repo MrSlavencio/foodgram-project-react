@@ -16,7 +16,7 @@ class CustomUserSerializer(UserSerializer):
         if not current_user:
             return False
         return Subscription.objects.filter(
-            subscriber=obj, author=current_user
+            subscriber=current_user, author=obj
         ).exists()
 
     class Meta:
