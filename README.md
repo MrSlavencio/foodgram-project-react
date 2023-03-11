@@ -229,3 +229,8 @@ Authorization: Token <USER'S TOKEN>
 GET http://<host>/api/recipes/download_shopping_cart/
 ```
 Полная документация REST-API с ответами сервера доступна в файле `docs\openapi-schema.yml`.
+## Об авторе
+Автор проекта - **Кобзев Вячеслав**, студент когорты 44 факультета Бэкенд разработки Яндекс-практикума.</br>
+Контакты для связи: </br>
+[*telegram*](https://t.me/mrslavencio "MrSlavencio")
+
