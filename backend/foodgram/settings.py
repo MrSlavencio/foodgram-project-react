@@ -25,6 +25,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     '84.252.138.45',
+    'foodgram-slava.hopto.org'
     'localhost',
     '127.0.0.1',
     '[::1]',
