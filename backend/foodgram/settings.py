@@ -21,11 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-+q0d(!59-6197xvwh149(k$2_m4x0x9@92h(d@4xe5a1=f87l3'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '84.252.138.45',
-    'foodgram-slava.hopto.org'
+    'foodgram-slava.hopto.org',
     'localhost',
     '127.0.0.1',
     '[::1]',
@@ -59,18 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_URLS_REGEXES = [
-    r'^/api/.*$',
-    r'^/admin/.*$',
-]
-
-CORS_ALLOWED_ORIGINS = [
-    'http://84.252.138.45',
-    'http://foodgram-slava.hopto.org',
-    'http://localhost',
-    'http://127.0.0.1',
-    'http://[::1]'
-]
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
 
 ROOT_URLCONF = 'foodgram.urls'
 
