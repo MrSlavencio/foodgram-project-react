@@ -228,3 +228,4 @@ Authorization: Token <USER'S TOKEN>
 
 GET http://<host>/api/recipes/download_shopping_cart/
 ```
+Полная документация REST-API с ответами сервера доступна в файле `docs\openapi-schema.yml`.
