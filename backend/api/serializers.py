@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -13,7 +14,7 @@ class CustomUserSerializer(UserSerializer):
 
     def check_if_is_subscribed(self, obj):
         current_user = self.context.get('request').user
-        if not current_user:
+        if not current_user or isinstance(current_user, AnonymousUser):
             return False
         return Subscription.objects.filter(
             subscriber=current_user, author=obj
