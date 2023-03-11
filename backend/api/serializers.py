@@ -12,7 +12,7 @@ class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField('check_if_is_subscribed')
 
     def check_if_is_subscribed(self, obj):
-        current_user = self.context.get('current_user')
+        current_user = self.context.get('request').user
         if not current_user:
             return False
         return Subscription.objects.filter(
