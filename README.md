@@ -44,7 +44,7 @@ sudo docker-compose exec web python manage.py collectstatic --no-input
     "admin-pass": "foodgramDIPLOMA"
 }
 ```
-**Подключение к БД через pgAdmin**
+**Подключение к БД через pgAdmin**</br>
 Регистрируем сервер</br>
 На вкладке *Connection*:
 * **Host name/adress** - внешний ip-адрес виртуальной машины
