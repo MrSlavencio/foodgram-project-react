@@ -4,6 +4,8 @@ services:
     image: postgres:13.0-alpine
     restart: always
     container_name: db
+    ports:
+      - "1520:5432"
     volumes:
       - foodgram_db_volume:/var/lib/postgresql/data/
     env_file:
