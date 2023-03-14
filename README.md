@@ -44,6 +44,14 @@ sudo docker-compose exec web python manage.py collectstatic --no-input
     "admin-pass": "foodgramDIPLOMA"
 }
 ```
+**Подключение к БД через pgAdmin**
+Регистрируем сервер</br>
+На вкладке *Connection*:
+* **Host name/adress** - внешний ip-адрес виртуальной машины
+* **Port** - порт, на котором запущена postgre (указан в docker-compose)
+* **Maintaince database** - название БД (из .env)
+* **Username** - пользователь БД (из .env или другой, если другой юзер создан)
+* **Password** - пароль пользователя от БД (из .env или другой, если другой юзер создан)
 ## Примеры API-запросов
 **Регистрация пользователей**
 ```
